@@ -1,3 +1,5 @@
+from typing import List
+
 from db import db
 
 class StoreModel(db.Model):
@@ -6,11 +8,8 @@ class StoreModel(db.Model):
     name = db.Column(db.String, nullable=False)
     items = db.relationship("ItemModel", lazy='dynamic')
 
-    def __init__(self, name):
-        self.name = name
-
     @classmethod
-    def find_by_name(cls, name):
+    def find_by_name(cls, name: str):
         return cls.query.filter_by(name=name).first()
 
     def save_to_db(self):
@@ -21,5 +20,6 @@ class StoreModel(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def json(self):
-        return {'name': self.name, 'items': [item.json() for item in self.items.all()]}
+    @classmethod
+    def find_all(cls) -> List:
+        return cls.query.all()
